@@ -1,0 +1,14 @@
+{{> header}}
+ 
+<div class="row justify-content-center photo-row"">
+  {{#photos}}
+    <div class="justify-content-center photo">
+      <a href="/photo/{{id}}" >
+        <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
+      </a>
+      <br /><div> {{title}}<br/> <small>{{name}} at {{date}}</small></div>
+    </div>
+  {{/photos}}
+</div>
+
+{{> footer}}
