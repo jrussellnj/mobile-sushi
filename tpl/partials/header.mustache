@@ -14,12 +14,17 @@
   </head>
 
   <body class="container">
-    <header class="row justify-content-center">
-      <h1>mobile.sushipop</h1>
+    <header>
+      <div class="row">
+        <div class="col-12 text-center">
+          <h1>mobile.sushipop</h1>
+        </div>
+      </div>
 
-      <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li>
+      <div class="row justify-content-center menu">
+        <div class="col-8 text-center">
+          <a href="/">Home</a>
+
           {{# is_logged_in}}
             <a href="/logout">Log Out</a>
           {{/ is_logged_in}}
@@ -27,6 +32,6 @@
           {{# is_logged_out}}
             <a href="#" id="log-in">Log In</a>
           {{/ is_logged_out}}
-        </li>
-      </ul>
+        </div>
+      </div>
     </header>
