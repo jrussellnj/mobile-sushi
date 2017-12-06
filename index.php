@@ -12,6 +12,7 @@
   $router->map('GET', '/', 'homeController#index');
   $router->map('POST', '/login', 'homeController#login');
   $router->map('GET', '/logout', 'homeController#logout');
+  $router->map('GET', '/photo/[i:id]', 'homeController#photo');
 
   $match = $router->match();
 

@@ -4,7 +4,7 @@
 
     function index() {
 
-      // Get latest photos for the home page
+      # Get latest photos for the home page
       $mysqli = parent::dbConnect();
 
       $res = $mysqli->query('
@@ -25,14 +25,56 @@
         $photos[] = $row;
       }
 
-      // Initialize and inflate the template
+      # Initialize and inflate the template
       $tpl = parent::tpl()->loadTemplate('index');
 
       print $tpl->render(array_merge(parent::getGlobalTemplateData(),
         array(
+          'is_index_page' => true,
           'photos' => $photos
         )
       ));
+    }
+
+    # Display one photo
+    function photo($params) {
+      $photoId = $params['id'];
+
+      # Get the photo's details from the database
+      $mysqli = parent::dbConnect();
+
+      $stmt = $mysqli->prepare('
+        select
+          mobile_photos.id,
+          photo,
+          title,
+          mobile_users.name,
+          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
+        from mobile_photos
+        inner join mobile_users
+        on user_id = mobile_users.id
+        where mobile_photos.id = ?
+        limit 1
+      ');
+
+      $stmt->bind_param('s', $photoId);
+      $stmt->execute();
+      $stmt->bind_result($id, $photo, $title, $name, $date);
+
+      while ($stmt->fetch()) {
+        $photoVars = array(
+          'id' => $id,
+          'photo' => $photo,
+          'title' => $title,
+          'name' => $name,
+          'date' => $date
+        );
+      }
+
+      # Initialize and inflate the template
+      $tpl = parent::tpl()->loadTemplate('photo');
+
+      print $tpl->render(array_merge(parent::getGlobalTemplateData(), $photoVars));
     }
 
     # Handle logging the user in

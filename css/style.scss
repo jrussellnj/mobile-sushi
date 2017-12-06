@@ -75,3 +75,22 @@ header {
     }
   }
 }
+
+/* Photo page */
+.photo-page {
+  .photo {
+    background: #F0F0F0;
+    padding: 1%;
+    margin: 1%;
+    width: 75%;
+
+    a {
+      display: block;
+      text-align: center;
+
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+}
