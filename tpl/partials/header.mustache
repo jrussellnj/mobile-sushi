@@ -1,14 +1,32 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
 
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600" rel="stylesheet">
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous" />
     <link rel="stylesheet" href="css/compressed/style.css" />
   </head>
-  
+
   <body class="container">
-    <header class="row">
-      mobile.sushipop
+    <header class="row justify-content-center">
+      <h1>mobile.sushipop</h1>
+
+      <ul class="menu">
+        <li><a href="/">Home</a></li>
+        <li>
+          {{# is_logged_in}}
+            <a href="/logout">Log Out</a>
+          {{/ is_logged_in}}
+
+          {{# is_logged_out}}
+            <a href="#" id="log-in">Log In</a>
+          {{/ is_logged_out}}
+        </li>
+      </ul>
     </header>

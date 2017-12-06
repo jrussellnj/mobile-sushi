@@ -1,10 +1,52 @@
 /* Header */
 header {
-  color: #D0D0D0;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 600;
-  font-size: 3em;
-  margin: 0.5em;
+  h1 {
+    color: #D0D0D0;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 3em;
+    margin: 0.5em;
+  }
+}
+
+/* Login overlay and dialog */
+#login-overlay {
+  background: rgba(0, 0, 0, .75);
+  display: none;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+
+  #login-dialog {
+    background: #fff;
+    margin: 10% auto 0;
+    max-width: 45%;
+    padding: 2.5%;
+
+    form {
+      input {
+        display: block;
+        margin: 1em 0 0;
+        width: 60%;
+      }
+
+      button {
+        display: block;
+        margin: 1em 0 0;
+      }
+    }
+
+    .dialog-close {
+      text-align: right;
+
+      a {
+        font-size: 14px;
+      }
+    }
+  }
 }
 
 /* Home page */
@@ -21,6 +63,7 @@ header {
 
       img {
         max-width: 100%;
+        max-height: 220px;
       }
     }
   }

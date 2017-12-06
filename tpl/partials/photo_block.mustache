@@ -1,0 +1,17 @@
+<div class="justify-content-center photo">
+  <a href="/photo/{{id}}" >
+    <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
+  </a>
+  <br />
+  <div>
+    {{^ title}}
+      Untitled
+    {{/ title}}
+
+    {{# title}}
+      {{title}}
+    {{/ title}}
+
+    <br/> <small>{{name}} at {{date}}</small>
+  </div>
+</div>

@@ -10,11 +10,14 @@
   # Use AltoRouter to map routes
   $router = new AltoRouter();
   $router->map('GET', '/', 'homeController#index');
+  $router->map('POST', '/login', 'homeController#login');
+  $router->map('GET', '/logout', 'homeController#logout');
 
   $match = $router->match();
 
   if ($match === false) {
     header("HTTP/1.0 404 Not Found");
+    print "Not found.";
   }
   else {
     list( $controller, $action ) = explode( '#', $match['target'] );
