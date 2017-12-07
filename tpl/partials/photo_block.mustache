@@ -1,17 +1,8 @@
 <div class="justify-content-center photo">
-
-  <!-- If this is the index page, show a smaller thumbnail, else show the larger image -->
-  {{# is_index_page}}
-    <a href="/photo/{{id}}">
-      <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
-    </a>
-  {{/ is_index_page}}
-
-  {{^ is_index_page}}
-    <a href="/photo/{{id}}">
-      <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
-    </a>
-  {{/ is_index_page}}
+  <!-- Photo and link -->
+  <a href="/photo/{{id}}">
+    <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
+  </a>
 
   <!-- Title and user info -->
   <br />

@@ -1,17 +1,50 @@
 {{> header}}
 
 <div class="row justify-content-center photo-page">
-  {{> photo_block}}
-</div>
-  
-<div class="row justify-content-center comment-block">
-  <div>
-    <h4>COMMENTS!</h4>
+  <div class="col">
+    <div class="justify-content-center photo">
+      <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
+
+      <div class="title-date">
+        {{^ title}}
+          Untitled
+        {{/ title}}
+
+        {{# title}}
+          {{title}}
+        {{/ title}}
+
+        <br/> <small>{{name}} at {{date}}</small>
+      </div>
+    </div>
   </div>
-  
-  {{# comments}}
-    {{name}}: {{comment}}<br />
-  {{/ comments}}
+
+  <div class="col comments">
+    <h4>Comments</h4>
+
+    {{# comments}}
+      <div class="comment">
+        <div class="name-comment"><span class="name">{{name}}</span>: {{comment}}</div>
+        <div class="date">{{date}}</div>
+
+        {{# is_logged_in }}
+          {{# logged_in_user_owns_comment }}
+            <small><a href="#" class="delete-comment" data-comment-id="{{id}}">Delete</a></small>
+          {{/ logged_in_user_owns_comment}}
+        {{/ is_logged_in}}
+      </div>
+    {{/ comments}}
+
+    {{# is_logged_in}}
+    <form method="post" action="/leave-comment" id="comment-form">
+      <input type="text" name="comment" autocomplete="off" placeholder="Type comment..." />
+      <input type="hidden" name="photo_id" value="{{id}}" />
+      <button type="submit">Leave Comment</button>
+      <input type="submit" />
+    </form>
+    {{/ is_logged_in}}
+  </div>
 </div>
 
+{{> delete_confirmation}}
 {{> footer}}

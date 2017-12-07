@@ -9,10 +9,21 @@
 
   # Use AltoRouter to map routes
   $router = new AltoRouter();
+
+  # Home page
   $router->map('GET', '/', 'homeController#index');
+
+  # Photo detail page
+  $router->map('GET', '/photo/[i:id]', 'homeController#photo');
+
+  # Commenting
+  $router->map('POST', '/leave-comment', 'homeController#leaveComment');
+  $router->map('POST', '/delete-comment', 'homeController#deleteComment');
+
+  # Logging in and out
   $router->map('POST', '/login', 'homeController#login');
   $router->map('GET', '/logout', 'homeController#logout');
-  $router->map('GET', '/photo/[i:id]', 'homeController#photo');
+
 
   $match = $router->match();
 
