@@ -40,9 +40,9 @@
     function photo($params) {
       $photoId = $params['id'];
 
-      # Get the photo's details from the database
       $mysqli = parent::dbConnect();
 
+      # Get the photo's details from the database
       $stmt = $mysqli->prepare('
         select
           mobile_photos.id,
@@ -71,10 +71,43 @@
         );
       }
 
+      # Get the photo's comments
+      $stmt = $mysqli->prepare('
+        select
+          mobile_users.name,
+          comment,
+          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
+        from mobile_comments
+        inner join mobile_photos
+        on photo_id = mobile_photos.id
+        inner join mobile_users
+        on mobile_comments.user_id = mobile_users.id
+        where photo_id = ?
+        order by date asc
+      ');
+
+      $stmt->bind_param('s', $photoId);
+      $stmt->execute();
+      $stmt->bind_result($name, $comment, $date);
+
+      while ($stmt->fetch()) {
+        $comments[] = array(
+          'name' => $name,
+          'comment' => $comment,
+          'date' => $date
+        );
+      }
+
       # Initialize and inflate the template
       $tpl = parent::tpl()->loadTemplate('photo');
 
-      print $tpl->render(array_merge(parent::getGlobalTemplateData(), $photoVars));
+      print $tpl->render(array_merge(
+        parent::getGlobalTemplateData(),
+        $photoVars,
+        array(
+          'comments' => $comments
+        )
+      ));
     }
 
     # Handle logging the user in
