@@ -2,6 +2,9 @@ $(document).ready(function() {
   // Handle logging in
   loggingIn();
 
+  // Home page 'load more photos' functionality
+  loadMorePhotos();
+
   // Commenting
   hookUpCommenting();
 });
@@ -51,8 +54,7 @@ function hookUpCommenting() {
   deleteLinks.click(function(e) {
     e.preventDefault();
 
-    var
-      thisId = $(this).data('comment-id');
+    var thisId = $(this).data('comment-id');
 
     deleteConfirmationOverlay.find('input[name="comment_id"]').val(thisId);
     deleteConfirmationOverlay.fadeIn();
@@ -63,8 +65,7 @@ function hookUpCommenting() {
   deleteCommentForm.submit(function(e) {
     e.preventDefault();
 
-    var
-      commentId = $(this).find('input[name="comment_id"]').val();
+    var commentId = $(this).find('input[name="comment_id"]').val();
 
     $.post('/delete-comment', { id: commentId }, function(data) {
       data = JSON.parse(data);
@@ -79,5 +80,30 @@ function hookUpCommenting() {
   deleteCloseLink.click(function(e) {
     e.preventDefault();
     deleteConfirmationOverlay.fadeOut();
+  });
+}
+
+function loadMorePhotos() {
+
+  var morePhotosLink = $('#load-more-photos');
+
+  // Store the data about which page of photos to get
+  morePhotosLink.data('get-page', 1);
+
+  morePhotosLink.click(function(e) {
+    e.preventDefault();
+
+    var
+      pageNumber = $(this).data('get-page'),
+      photoContainer = $('#photo-container');
+
+    $.get('/more-photos', { page: pageNumber }, function(data) {
+      photoContainer.append(data);
+
+      var newPhotosOffset = $('#photo-container .photo-row:last-child').offset().top;
+      $("html, body").stop().animate({scrollTop: newPhotosOffset}, 500);
+
+      morePhotosLink.data('get-page', ++pageNumber);
+    });
   });
 }

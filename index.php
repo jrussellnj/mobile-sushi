@@ -12,6 +12,7 @@
 
   # Home page
   $router->map('GET', '/', 'homeController#index');
+  $router->map('GET', '/more-photos', 'homeController#morePhotos');
 
   # Photo detail page
   $router->map('GET', '/photo/[i:id]', 'homeController#photo');

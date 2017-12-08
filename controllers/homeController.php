@@ -2,29 +2,14 @@
 
   class homeController extends applicationController {
 
+    # How many photos to get for the home page
+    private static $limit = 12;
+
     # Home page
     public static function index() {
 
-      # Get latest photos for the home page
-      $mysqli = parent::dbConnect();
-
-      $res = $mysqli->query('
-        select
-          mobile_photos.id,
-          photo,
-          title,
-          mobile_users.name,
-          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
-        from mobile_photos
-        inner join mobile_users
-        on user_id = mobile_users.id
-        order by timestamp desc
-        limit 12
-      ');
-
-      while ($row = $res->fetch_assoc()) {
-        $photos[] = $row;
-      }
+      # Get the first page of photos
+      $photos = self::getPhotos();
 
       # Initialize and inflate the template
       $tpl = parent::tpl()->loadTemplate('index');
@@ -36,10 +21,25 @@
       ));
     }
 
+    public static function morePhotos() {
+      $pageNumber = $_GET['page'];
+
+      # Get a new page of photos
+      $photos = self::getPhotos($pageNumber);
+
+      # Initialize and inflate the template
+      $tpl = parent::tpl()->loadPartial('ajax/more_photos');
+
+      print $tpl->render(array(
+        'photos' => $photos
+      ));
+    }
+
     # Photo details page
     public static function photo($params) {
       $photoId = $params['id'];
 
+      # Get database handler
       $mysqli = parent::dbConnect();
 
       # Get the logged-in user's ID
@@ -204,6 +204,47 @@
       setcookie('msushi', '', time() - 3600);
 
       header('Location: /');
+    }
+
+    # Retrieve photos from the database
+    private static function getPhotos($page = 0) {
+
+      # Get latest photos for the home page
+      $mysqli = parent::dbConnect();
+
+      $stmt = $mysqli->prepare('
+        select
+          mobile_photos.id,
+          photo,
+          title,
+          mobile_users.name,
+          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
+        from mobile_photos
+        inner join mobile_users
+        on user_id = mobile_users.id
+        order by timestamp desc
+        limit ?
+        offset ?
+      ');
+
+      $offset = self::$limit * $page;
+      $stmt->bind_param('ss', self::$limit, $offset);
+      $stmt->execute();
+      $stmt->bind_result($id, $photo, $title, $name, $date);
+
+      $photos = array();
+
+      while ($row = $stmt->fetch()) {
+        $photos[] = array(
+          'id' => $id,
+          'photo' => $photo,
+          'title' => $title,
+          'name' => $name,
+          'date' => $date
+        );
+      }
+
+      return $photos;
     }
 
     # Get the logged-in user's ID
