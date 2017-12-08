@@ -22,26 +22,34 @@
   <div class="col comments">
     <h4>Comments</h4>
 
-    {{# comments}}
-      <div class="comment">
-        <div class="name-comment"><span class="name">{{name}}</span>: {{comment}}</div>
-        <div class="date">{{date}}</div>
-
-        {{# is_logged_in }}
-          {{# logged_in_user_owns_comment }}
-            <small><a href="#" class="delete-comment" data-comment-id="{{id}}">Delete</a></small>
-          {{/ logged_in_user_owns_comment}}
-        {{/ is_logged_in}}
-      </div>
-    {{/ comments}}
-
     {{# is_logged_in}}
-    <form method="post" action="/leave-comment" id="comment-form">
-      <input type="text" name="comment" autocomplete="off" placeholder="Type comment..." />
-      <input type="hidden" name="photo_id" value="{{id}}" />
-      <button type="submit">Leave Comment</button>
-      <input type="submit" />
-    </form>
+      {{# comments}}
+        <div class="comment">
+          <div class="name-comment"><span class="name">{{name}}</span>: {{comment}}</div>
+          <div class="date">{{date}}</div>
+
+          {{# is_logged_in }}
+            {{# logged_in_user_owns_comment }}
+              <small><a href="#" class="delete-comment" data-comment-id="{{id}}">Delete</a></small>
+            {{/ logged_in_user_owns_comment}}
+          {{/ is_logged_in}}
+        </div>
+      {{/ comments}}
+
+      {{^ comments}}
+        No comment. Make one now!
+      {{/ comments}}
+
+      <form method="post" action="/leave-comment" id="comment-form">
+        <input type="text" name="comment" autocomplete="off" placeholder="Type comment..." />
+        <input type="hidden" name="photo_id" value="{{id}}" />
+        <button type="submit">Leave Comment</button>
+        <input type="submit" />
+      </form>
+    {{/ is_logged_in}}
+
+    {{^ is_logged_in}}
+      Please log in to view and make comments.
     {{/ is_logged_in}}
   </div>
 </div>

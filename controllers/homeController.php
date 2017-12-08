@@ -195,7 +195,10 @@
         }
       }
 
-      header('Location: /');
+      # Send the user back to the page they were on, if we have this information
+      $location = ($_SERVER['HTTP_REFERER'] != '') ? $_SERVER['HTTP_REFERER'] : '/';
+
+      header("Location: $location");
     }
 
     # Handle logging the user out
@@ -203,7 +206,10 @@
       unset($_COOKIE['msushi']);
       setcookie('msushi', '', time() - 3600);
 
-      header('Location: /');
+      # Send the user back to the page they were on, if we have this information
+      $location = ($_SERVER['HTTP_REFERER'] != '') ? $_SERVER['HTTP_REFERER'] : '/';
+
+      header("Location: $location");
     }
 
     # Retrieve photos from the database
