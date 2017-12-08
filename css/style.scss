@@ -1,5 +1,9 @@
 @import 'variables';
 
+body a {
+  text-decoration: none !important;
+}
+
 /* Header */
 header {
   margin: 3em 0 2em;
