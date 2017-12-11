@@ -32,6 +32,9 @@
         $data['is_logged_out'] = true;
       }
 
+      # Get unread comment information
+      $data['unread_comments'] = self::getUnreadComments();
+
       return $data;
     }
 
@@ -55,6 +58,56 @@
       }
 
       return $isValid;
+    }
+
+    # Get the logged-in user's ID
+    protected static function getLoggedInUsersId() {
+      $mysqli = self::dbConnect();
+      $stmt = $mysqli->prepare('select count(*) from mobile_users where password = ? limit 1');
+      $stmt->bind_param('s', $_COOKIE['msushi']);
+      $stmt->execute();
+      $stmt->bind_result($userId);
+      $stmt->fetch();
+      $stmt->close();
+
+      return $userId;
+    }
+
+    # Get information about the logged-in user's unread comments
+    private static function getUnreadComments() {
+      $userId = self::getLoggedInUsersId();
+      $totalNewComments = 0;
+      $comments = array();
+
+      if ($userId) {
+        $mysqli = self::dbConnect();
+        $stmt = $mysqli->prepare('
+          select mobile_photos.id, trim(title), count(mobile_comments.id)
+          from mobile_comments_unseen
+          inner join mobile_comments on comment_id = mobile_comments.id
+          inner join mobile_photos on mobile_comments.photo_id = mobile_photos.id
+          where unseen_by_user_id = ?
+          group by mobile_photos.id
+        ');
+        $stmt->bind_param('s', $userId);
+        $stmt->execute();
+        $stmt->bind_result($photoId, $title, $unreadCommentsOnPhoto);
+
+        while ($stmt->fetch()) {
+          $comments[] = array(
+            'photo_id' => $photoId,
+            'title' => ($title != '') ? $title : "Untitled ($photoId)",
+            'unread_comments_on_photo' => $unreadCommentsOnPhoto
+          );
+
+          $totalNewComments += $unreadCommentsOnPhoto;
+        }
+      }
+
+      return array(
+        'total_unread_comments' => $totalNewComments,
+        'comments' => $comments
+      );
     }
   }
 ?>

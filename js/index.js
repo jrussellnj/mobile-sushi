@@ -5,6 +5,9 @@ $(document).ready(function() {
   // Home page 'load more photos' functionality
   loadMorePhotos();
 
+  // Home page unread comment bubble
+  unreadComments();
+
   // Commenting
   hookUpCommenting();
 });
@@ -105,5 +108,16 @@ function loadMorePhotos() {
 
       morePhotosLink.data('get-page', ++pageNumber);
     });
+  });
+}
+
+function unreadComments() {
+  var
+    unreadLink = $('#unread-comments-bubble'),
+    unreadDetails = $('#unread-comments-details');
+
+  unreadLink.click(function(e) {
+    e.preventDefault();
+    unreadDetails.slideToggle(250);
   });
 }

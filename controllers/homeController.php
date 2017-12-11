@@ -43,7 +43,7 @@
       $mysqli = parent::dbConnect();
 
       # Get the logged-in user's ID
-      $userId = self::getLoggedInUsersId();
+      $userId = parent::getLoggedInUsersId();
 
       # Get the photo's details from the database
       $stmt = $mysqli->prepare('
@@ -105,6 +105,11 @@
         );
       }
 
+      # Mark that the user has read all the comments for this photo
+      $stmt = $mysqli->prepare('delete from mobile_comments_unseen where comment_id in (select id from mobile_comments where photo_id = ?) and unseen_by_user_id = ?');
+      $stmt->bind_param('ss', $photoId, $userId);
+      $stmt->execute();
+
       # Initialize and inflate the template
       $tpl = parent::tpl()->loadTemplate('photo');
 
@@ -124,7 +129,7 @@
       $mysqli = parent::dbConnect();
 
       # Get the logged-in user's ID
-      $userId = self::getLoggedInUsersId();
+      $userId = parent::getLoggedInUsersId();
 
       if ($userId) {
         # Insert the comment into the database
@@ -149,7 +154,7 @@
       $commentId = $_POST['id'];
 
       # Get the ID of the logged-in user
-      $loggedInUserId = self::getLoggedInUsersId();
+      $loggedInUserId = parent::getLoggedInUsersId();
 
       # Get the database handler
       $mysqli = parent::dbConnect();
@@ -180,18 +185,42 @@
       if ($_POST['username'] != '' && $_POST['password'] != '') {
         $md5Password = md5($_POST['password']);
 
+        # Find a user by the supplised user name and password
         $mysqli = parent::dbConnect();
-        $stmt = $mysqli->prepare('select count(*) from mobile_users where username = ? and password = ? limit 1');
+        $stmt = $mysqli->prepare('select id from mobile_users where username = ? and password = ? limit 1');
         $stmt->bind_param('ss', $_POST['username'], $md5Password);
         $stmt->execute();
-        $stmt->bind_result($col1);
+        $stmt->bind_result($userId);
+        $stmt->store_result();
 
-
-        while ($stmt->fetch()) {
-          if ($col1 == 1) {
+        if ($stmt->num_rows > 0) {
+          while ($stmt->fetch()) {
             # Set the msushi cookie
             setcookie('msushi', $md5Password, time() + (86400 * 30)); // Cookie is good for 30 days
           }
+
+          # Get the latest comments the user missed and add them to the unseen comments table
+          $stmt = $mysqli->prepare('select id from mobile_comments where mobile_comments.date > (select unix_timestamp(last_visited) from mobile_users where id = ?)');
+          $stmt->bind_param('s', $userId);
+          $stmt->execute();
+          $stmt->bind_result($commentId);
+
+          $unseenCommentIds = array();
+
+          while ($stmt->fetch()) {
+            $unseenCommentIds[] = $commentId;
+          }
+
+          foreach($unseenCommentIds as $id) {
+            $stmt = $mysqli->prepare('insert into mobile_comments_unseen (comment_id, unseen_by_user_id) values (?, ?)');
+            $stmt->bind_param('ss', $id, $userId);
+            $stmt->execute();
+          }
+
+          # Update the user's last_visited value
+          $stmt = $mysqli->prepare('update mobile_users set last_visited = now() where username = ? and password = ? limit 1');
+          $stmt->bind_param('ss', $_POST['username'], $md5Password);
+          $stmt->execute();
         }
       }
 
@@ -253,20 +282,6 @@
       return $photos;
     }
 
-    # Get the logged-in user's ID
-    private static function getLoggedInUsersId() {
-
-      # Get the user's ID
-      $mysqli = self::dbConnect();
-      $stmt = $mysqli->prepare('select count(*) from mobile_users where password = ? limit 1');
-      $stmt->bind_param('s', $_COOKIE['msushi']);
-      $stmt->execute();
-      $stmt->bind_result($userId);
-      $stmt->fetch();
-      $stmt->close();
-
-      return $userId;
-    }
   }
 
 ?>

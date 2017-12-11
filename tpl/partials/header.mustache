@@ -27,6 +27,29 @@
 
           {{# is_logged_in}}
             <a href="/logout">Log Out</a>
+
+            <span>
+              {{# unread_comments}}
+                <a href="#" id="unread-comments-bubble" data-unread="{{total_unread_comments}}" {{^ comments}}class="zero-unread"{{/ comments}}>
+                    <div class="number-unread">{{total_unread_comments}}</div>
+
+                  <img src="/images/bubble.svg" />
+                </a>
+              {{/ unread_comments}}
+              <div id="unread-comments-details">
+                {{# unread_comments}}
+                  <h5>Unread Comments</h5>
+                  {{# comments}}
+                    <a href="/photo/{{photo_id}}">{{unread_comments_on_photo}} unread comments on "{{title}}"</a>
+                  {{/ comments}}
+
+                  {{^ comments}}
+                    You're all caught up!
+                  {{/ comments}}
+                {{/ unread_comments}}
+              </div>
+            </span>
+            </a>
           {{/ is_logged_in}}
 
           {{# is_logged_out}}
