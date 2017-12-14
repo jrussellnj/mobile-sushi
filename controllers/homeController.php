@@ -268,7 +268,8 @@
           photo,
           title,
           mobile_users.name,
-          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
+          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+          (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
         from mobile_photos
         inner join mobile_users
         on user_id = mobile_users.id
@@ -280,7 +281,7 @@
       $offset = self::$limit * $page;
       $stmt->bind_param('ss', self::$limit, $offset);
       $stmt->execute();
-      $stmt->bind_result($id, $photo, $title, $name, $date);
+      $stmt->bind_result($id, $photo, $title, $name, $date, $commentnum);
 
       $photos = array();
 
@@ -290,7 +291,8 @@
           'photo' => $photo,
           'title' => $title,
           'name' => $name,
-          'date' => $date
+          'date' => $date,
+          'commentnum' => $commentnum
         );
       }
 
