@@ -108,7 +108,7 @@
 
         # Get full photo information for the unread comments
         $stmt = $mysqli->prepare('
-          select mobile_photos.id, trim(title), count(mobile_comments.id)
+          select mobile_photos.id, trim(replace(title, "\n", "")) as title, count(mobile_comments.id)
           from mobile_comments_unseen
           inner join mobile_comments on comment_id = mobile_comments.id
           inner join mobile_photos on mobile_comments.photo_id = mobile_photos.id
