@@ -11,8 +11,8 @@
     protected static function tpl() {
       Mustache_Autoloader::register();
       $mustache = new Mustache_Engine(array(
-        "loader" => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../tpl'),
-        "partials_loader" => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../tpl/partials')
+        'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../tpl'),
+        'partials_loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../tpl/partials')
       ));
 
       return $mustache;
@@ -42,7 +42,7 @@
     protected static function isValidUser($msushiCookie) {
       if ($msushiCookie) {
         $mysqli = self::dbConnect();
-        $stmt = $mysqli->prepare('select count(*) from mobile_users where password = ? limit 1');
+        $stmt = $mysqli->prepare('select count(*) from mobile_users where token = ? limit 1');
         $stmt->bind_param('s', $msushiCookie);
         $stmt->execute();
         $stmt->bind_result($col1);
@@ -63,7 +63,7 @@
     # Get the logged-in user's ID
     protected static function getLoggedInUsersId() {
       $mysqli = self::dbConnect();
-      $stmt = $mysqli->prepare('select count(*) from mobile_users where password = ? limit 1');
+      $stmt = $mysqli->prepare('select id from mobile_users where token = ? limit 1');
       $stmt->bind_param('s', $_COOKIE['msushi']);
       $stmt->execute();
       $stmt->bind_result($userId);
@@ -81,6 +81,33 @@
 
       if ($userId) {
         $mysqli = self::dbConnect();
+
+        # Get the latest comments the user missed and add them to the unseen comments table
+        $stmt = $mysqli->prepare('select id from mobile_comments where mobile_comments.date > (select unix_timestamp(last_visited) from mobile_users where id = ?)');
+        $stmt->bind_param('s', $userId);
+        $stmt->execute();
+        $stmt->bind_result($commentId);
+
+        $unseenCommentIds = array();
+
+        while ($stmt->fetch()) {
+          $unseenCommentIds[] = $commentId;
+        }
+
+        foreach($unseenCommentIds as $id) {
+          $stmt = $mysqli->prepare('insert into mobile_comments_unseen (comment_id, unseen_by_user_id) values (?, ?)');
+          $stmt->bind_param('ss', $id, $userId);
+          $stmt->execute();
+        }
+
+
+        # Update the user's last_visited value
+        $stmt = $mysqli->prepare('update mobile_users set last_visited = now() where id = ? limit 1');
+        $stmt->bind_param('s', $userId);
+        $stmt->execute();
+
+
+        # Get full photo information for the unread comments
         $stmt = $mysqli->prepare('
           select mobile_photos.id, trim(title), count(mobile_comments.id)
           from mobile_comments_unseen
@@ -110,4 +137,5 @@
       );
     }
   }
+
 ?>
