@@ -23,7 +23,7 @@
       $data = array();
 
       # Determine whether or not the user has a login cookie, and if they do, whether or not they are a valid user
-      if ($_COOKIE['msushi'] && self::isValidUser($_COOKIE['msushi'])) {
+      if (isset($_COOKIE['msushi']) && self::isValidUser($_COOKIE['msushi'])) {
         $data['is_logged_in'] = true;
         $data['is_logged_out'] = false;
       }
