@@ -289,7 +289,7 @@
         $photos[] = array(
           'id' => $id,
           'photo' => $photo,
-          'title' => $title,
+          'title' => trim($title),
           'name' => $name,
           'date' => $date,
           'commentnum' => $commentnum
