@@ -203,7 +203,8 @@
           while ($stmt->fetch()) {
 
             # Create a token
-            $token = password_hash(microtime() * $userId, PASSWORD_BCRYPT);
+            $salt = substr(strtr(base64_encode(openssl_random_pseudo_bytes(22)), '+', '.'), 0, 22);
+            $token = crypt(microtime() * $userId, '$2y$12$' . $salt);
 
             # Set the msushi cookie
             setcookie('msushi', $token, time() + (86400 * 30)); // Cookie is good for 30 days
