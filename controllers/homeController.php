@@ -95,6 +95,8 @@
       $stmt->execute();
       $stmt->bind_result($id, $name, $authorId, $comment, $date);
 
+      $comments = array();
+
       while ($stmt->fetch()) {
         $comments[] = array(
           'id' => $id,
