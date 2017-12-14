@@ -266,7 +266,7 @@
         select
           mobile_photos.id,
           photo,
-          title,
+          replace(title, "\n", "") as title,
           mobile_users.name,
           from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
           (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
