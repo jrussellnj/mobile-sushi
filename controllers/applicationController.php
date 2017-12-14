@@ -40,6 +40,8 @@
 
     # Figure out if the user is logged in by checking their msushi cookie, if one exists
     protected static function isValidUser($msushiCookie) {
+      $isValid = false;
+
       if ($msushiCookie) {
         $mysqli = self::dbConnect();
         $stmt = $mysqli->prepare('select count(*) from mobile_users where token = ? limit 1');
@@ -52,9 +54,6 @@
             $isValid = true;
           }
         }
-      }
-      else {
-        $isValid = false;
       }
 
       return $isValid;
