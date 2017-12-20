@@ -7,8 +7,10 @@
   require_once('controllers/applicationController.php');
   require_once('controllers/homeController.php');
 
+
   # Use AltoRouter to map routes
   $router = new AltoRouter();
+
 
   # Home page
   $router->map('GET', '/', 'homeController#index');
@@ -25,7 +27,12 @@
   $router->map('POST', '/login', 'homeController#login');
   $router->map('GET', '/logout', 'homeController#logout');
 
+  # Explore page
+  $router->map('GET', '/explore', 'homeController#explore');
+  $router->map('GET', '/explore/results', 'homeController#exploreResults');
 
+
+  # Figure out if the route is matched, and if it is, call its controller action
   $match = $router->match();
 
   if ($match === false) {
@@ -37,9 +44,9 @@
 
     if ( is_callable(array($controller, $action)) ) {
         call_user_func_array(array($controller, $action), array($match['params']));
-    } else {
-        // here your routes are wrong.
-        // Throw an exception in debug, send a  500 error in production
+    }
+    else {
+      header("HTTP/1.0 500 Internal Server Error");
     }
   }
 ?>

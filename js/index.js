@@ -10,6 +10,9 @@ $(document).ready(function() {
 
   // Commenting
   hookUpCommenting();
+
+  // Explore page date picker
+  datePicker();
 });
 
 function loggingIn() {
@@ -119,5 +122,16 @@ function unreadComments() {
   unreadLink.click(function(e) {
     e.preventDefault();
     unreadDetails.slideToggle(250);
+  });
+}
+
+function datePicker() {
+  var picker = new Pikaday({
+    field: document.getElementById('datepicker'),
+    format: 'YYYY-MM-DD',
+    onSelect: function() {
+      $('input[name="date_formatted"]').val(this.getDate());
+      console.log(this.getDate());
+    }
   });
 }

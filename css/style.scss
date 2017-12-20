@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'lib/pikaday';
 
 body {
   padding: 0 0 5% 0;
@@ -210,4 +211,14 @@ header {
       display: none;
     }
   }
+}
+
+/* Explore results page */
+.prev-page-link {
+  margin: 0 1em 0 0;
+}
+
+#datepicker {
+  padding: 0.5em 1em;
+  width: 17em;
 }

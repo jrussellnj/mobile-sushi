@@ -1,7 +1,7 @@
 {{> header}}
 
-<div class="row justify-content-center photo-page">
-  <div class="col">
+<div class="row photo-page">
+  <div class="col-6">
     <div class="justify-content-center photo">
       <a href="http://mobile.sushipopsicle.com/userimages/{{photo}}" target="_blank">
         <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
@@ -21,13 +21,13 @@
     </div>
   </div>
 
-  <div class="col comments">
+  <div class="col-6 comments">
     <h4>Comments</h4>
 
     {{# is_logged_in}}
       {{# comments}}
         <div class="comment">
-          <div class="name-comment"><span class="name">{{name}}</span>: {{comment}}</div>
+          <div class="name-comment"><span class="name">{{name}}</span>: {{{comment}}}</div>
           <div class="date">{{date}}</div>
 
           {{# is_logged_in }}

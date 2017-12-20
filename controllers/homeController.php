@@ -124,6 +124,66 @@
       ));
     }
 
+    # Explore page - main
+    public static function explore() {
+
+      # Get database handler
+      $mysqli = parent::dbConnect();
+
+      # Get possible users to seach by
+      $result = $mysqli->query('select id, name from mobile_users order by name');
+
+      while ($row = $result->fetch_assoc()) {
+        $users[] = array(
+          'id' => $row['id'],
+          'name' => $row['name']
+        );
+      }
+
+      # Initialize and inflate the template
+      $tpl = parent::tpl()->loadTemplate('explore');
+
+      print $tpl->render(array_merge(
+        parent::getGlobalTemplateData(),
+        array(
+          'users' => $users
+        )
+      ));
+    }
+
+    # Explore page - results
+    public static function exploreResults() {
+
+      # Get the page number and search parameters
+      $pageNumber = $_GET['page'];
+      $searchParams = array(
+        'user_id' => $_GET['user_id'],
+        'date_formatted' => $_GET['date_formatted']
+      );
+
+      # Populate the array used for Explore results page pagination
+      $pagination = array(
+        'user_id' => $searchParams['user_id'],
+        'date_formatted' => $searchParams['date_formatted'],
+        'next_page' => $pageNumber + 1,
+        'prev_page' => ($pageNumber - 1) > 0 ? $pageNumber - 1 : 0,
+        'show_prev_page' => $pageNumber - 1 >= 0
+      );
+
+      # Get the photos
+      $photos = self::getPhotos($pageNumber, $searchParams);
+
+      # Initialize and inflate the template
+      $tpl = parent::tpl()->loadTemplate('explore_results');
+
+      print $tpl->render(array_merge(parent::getGlobalTemplateData(),
+        array(
+          'photos' => $photos,
+          'pagination' => $pagination
+        )
+      ));
+    }
+
     # Post a comment
     public static function leaveComment() {
 
@@ -257,29 +317,109 @@
     }
 
     # Retrieve photos from the database
-    private static function getPhotos($page = 0) {
+    private static function getPhotos($page = 0, $searchParams = array()) {
 
       # Get latest photos for the home page
       $mysqli = parent::dbConnect();
 
-      $stmt = $mysqli->prepare('
-        select
-          mobile_photos.id,
-          photo,
-          replace(title, "\n", "") as title,
-          mobile_users.name,
-          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
-          (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
-        from mobile_photos
-        inner join mobile_users
-        on user_id = mobile_users.id
-        order by timestamp desc
-        limit ?
-        offset ?
-      ');
-
+      # Figure out the offset for the queries below
       $offset = self::$limit * $page;
-      $stmt->bind_param('ss', self::$limit, $offset);
+
+      # If we've sent in search params, figure out which query to use, and if not, 
+      # use the general query that gets the latest photos
+      if (count($searchParams) > 0) {
+
+        # Asking for photos by user id
+        if ($searchParams['user_id'] != '' && $searchParams['date_formatted'] == '') {
+          $query = 'select
+            mobile_photos.id,
+            photo,
+            replace(title, "\n", "") as title,
+            mobile_users.name,
+            from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+            (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
+          from mobile_photos
+          inner join mobile_users
+          on user_id = mobile_users.id
+          where user_id = ?
+          order by timestamp desc
+          limit ?
+          offset ?';
+
+          $stmt = $mysqli->prepare($query);
+          $stmt->bind_param('sss', $searchParams['user_id'], self::$limit, $offset);
+        }
+
+        # Asking for photos by date
+        elseif ($searchParams['user_id'] == '' && $searchParams['date_formatted'] != '') {
+          $query = 'select
+            mobile_photos.id,
+            photo,
+            replace(title, "\n", "") as title,
+            mobile_users.name,
+            from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+            (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
+          from mobile_photos
+          inner join mobile_users
+          on user_id = mobile_users.id
+          where timestamp between ? and ?
+          order by timestamp desc
+          limit ?
+          offset ?';
+
+          $startTime = strtotime($searchParams['date_formatted']);
+          $endTime = $startTime + 86400;
+
+          $stmt = $mysqli->prepare($query);
+          $stmt->bind_param('ssss', $startTime, $endTime, self::$limit, $offset);
+        }
+
+        # Asking for photos by both user id and date
+        elseif ($searchParams['user_id'] != '' && $searchParams['date_formatted'] != '') {
+          $query = 'select
+            mobile_photos.id,
+            photo,
+            replace(title, "\n", "") as title,
+            mobile_users.name,
+            from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+            (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
+          from mobile_photos
+          inner join mobile_users
+          on user_id = mobile_users.id
+          where user_id = ? and timestamp between ? and ?
+          order by timestamp desc
+          limit ?
+          offset ?';
+
+          $startTime = strtotime($searchParams['date_formatted']);
+          $endTime = $startTime + 86400;
+
+          $stmt = $mysqli->prepare($query);
+          $stmt->bind_param('sssss', $searchParams['user_id'], $startTime, $endTime, self::$limit, $offset);
+        }
+      }
+      else {
+
+        # Just get the latest photos
+        $stmt = $mysqli->prepare('
+          select
+            mobile_photos.id,
+            photo,
+            replace(title, "\n", "") as title,
+            mobile_users.name,
+            from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+            (select count(id) from mobile_comments where photo_id = mobile_photos.id) as commentnum
+          from mobile_photos
+          inner join mobile_users
+          on user_id = mobile_users.id
+          order by timestamp desc
+          limit ?
+          offset ?
+        ');
+
+        $stmt->bind_param('ss', self::$limit, $offset);
+      }
+
       $stmt->execute();
       $stmt->bind_result($id, $photo, $title, $name, $date, $commentnum);
 

@@ -1,0 +1,26 @@
+{{> header}}
+
+<div id="photo-container">
+  <div class="row justify-content-center photo-row"">
+    {{#photos}}
+      {{> photo_block}}
+    {{/photos}}
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-3 text-center my-4">
+
+    {{# pagination}}
+      {{# show_prev_page}}
+        <a href="/explore/results?user_id={{user_id}}&date_formatted={{date_formatted}}&page={{prev_page}}" class="prev-page-link"> ⃪ Previous Page </a>
+      {{/ show_prev_page}}
+
+      {{# next_page}}
+        <a href="/explore/results?user_id={{user_id}}&date_formatted={{date_formatted}}&page={{next_page}}"> Next Page →</a>
+      {{/ next_page }}
+    {{/ pagination}}
+  </div>
+</div>
+
+{{> footer}}
