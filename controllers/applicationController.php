@@ -41,6 +41,7 @@
     # Figure out if the user is logged in by checking their msushi cookie, if one exists
     protected static function isValidUser($msushiCookie) {
       $isValid = false;
+      $msushiCookie = urldecode($msushiCookie);
 
       if ($msushiCookie) {
         $mysqli = self::dbConnect();
