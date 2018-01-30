@@ -5,11 +5,11 @@
 
   <p>You may select a date, a user, or both.</p>
 
-  <br /><br />
+  <br />
 
   <h5>Select a date</h5>
   <input type="text" id="datepicker" placeholder="Click here to select date..." />
-  <p><br /><strong>Note!</strong> You can click the month to change the month, and the year to change the year.</p>
+  <p><br /><strong>Note!</strong> You can click the month to change the month and the year to change the year.</p>
 
   <br /><br />
 
@@ -26,6 +26,10 @@
 
   <input type="hidden" name="date_formatted" />
   <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<form method="post" action="/get-random-photo">
+  <button type="submit" class="btn btn-secondary random-photo-btn">See a Random Photo</button>
 </form>
 
 {{> footer}}

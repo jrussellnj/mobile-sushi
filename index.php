@@ -31,6 +31,9 @@
   $router->map('GET', '/explore', 'homeController#explore');
   $router->map('GET', '/explore/results', 'homeController#exploreResults');
 
+  # View a random photo
+  $router->map('POST', '/get-random-photo', 'homeController#getRandomPhoto');
+
 
   # Figure out if the route is matched, and if it is, call its controller action
   $match = $router->match();

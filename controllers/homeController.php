@@ -161,27 +161,53 @@
         'date_formatted' => $_GET['date_formatted']
       );
 
+      # Get the photos
+      $photos = self::getPhotos($pageNumber, $searchParams);
+
+      # Used to figure out if there's a next page of photos
+      $nextPhotos = self::getPhotos($pageNumber + 1, $searchParams);
+
       # Populate the array used for Explore results page pagination
       $pagination = array(
         'user_id' => $searchParams['user_id'],
         'date_formatted' => $searchParams['date_formatted'],
-        'next_page' => $pageNumber + 1,
+        'next_page' => (count($nextPhotos) > 0) ? $pageNumber + 1 : null,
         'prev_page' => ($pageNumber - 1) > 0 ? $pageNumber - 1 : 0,
         'show_prev_page' => $pageNumber - 1 >= 0
       );
 
-      # Get the photos
-      $photos = self::getPhotos($pageNumber, $searchParams);
-
       # Initialize and inflate the template
       $tpl = parent::tpl()->loadTemplate('explore_results');
 
-      print $tpl->render(array_merge(parent::getGlobalTemplateData(),
-        array(
+      if (count($photos) > 0) {
+        $results = array(
           'photos' => $photos,
           'pagination' => $pagination
+        );
+      }
+      else {
+        $results = false;
+      }
+
+      print $tpl->render(array_merge(parent::getGlobalTemplateData(),
+        array(
+          'results' => $results
         )
       ));
+    }
+
+    public static function getRandomPhoto() {
+      # Get database handler
+      $mysqli = parent::dbConnect();
+
+      # Get possible users to seach by
+      $result = $mysqli->query('select id from mobile_photos order by rand() limit 1');
+
+      while ($row = $result->fetch_assoc()) {
+        $id = $row['id'];
+      }
+
+      header('Location: /photo/' . $id);
     }
 
     # Post a comment

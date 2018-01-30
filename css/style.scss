@@ -213,6 +213,12 @@ header {
   }
 }
 
+/* Explore page */
+#explore-form .btn,
+.random-photo-btn {
+  cursor: pointer;
+}
+
 /* Explore results page */
 .prev-page-link {
   margin: 0 1em 0 0;
