@@ -217,7 +217,11 @@ header {
     input {
       display: block;
       padding: .5em;
-      width: 60%;
+      width: 100%;
+
+      @include respond-min($desktopSmall) {
+        width: 60%;
+      }
 
       &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
         color: $darkGray;
