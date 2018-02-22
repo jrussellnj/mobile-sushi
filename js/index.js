@@ -164,7 +164,6 @@ function datePicker() {
     format: 'YYYY-MM-DD',
     onSelect: function() {
       $('input[name="date_formatted"]').val(this.getDate());
-      console.log(this.getDate());
     }
   });
 }
