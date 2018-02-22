@@ -8,6 +8,7 @@
       </a>
 
       <div class="title-date">
+        <span id="the-title">
         {{^ title}}
           Untitled
         {{/ title}}
@@ -15,8 +16,21 @@
         {{# title}}
           {{title}}
         {{/ title}}
+        </span>
 
-        <br/> <small>{{name}} at {{date}}</small>
+        {{# logged_in_user_owns_photo}}
+          <form id="edit-title-form">
+            <input type="text" name="new_title" value="{{title}}" placeholder="Type new title..." />
+            <input type="hidden" name="photo_id" value="{{id}}" />
+            <button type="submit">Edit Title</button>
+          </form>
+
+          <small><a href="#" class="edit-title"><span class="default">Edit</span><span class="never-mind">Never mind</span></a></small>
+        {{/ logged_in_user_owns_photo}}
+      </div>
+
+      <div>
+        <small>{{name}} at {{date}}</small>
       </div>
     </div>
   </div>

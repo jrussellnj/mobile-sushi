@@ -19,6 +19,9 @@
   # Photo detail page
   $router->map('GET', '/photo/[i:id]', 'homeController#photo');
 
+  # Photo title editing
+  $router->map('POST', '/edit-title', 'homeController#editTitle');
+
   # Commenting
   $router->map('POST', '/leave-comment', 'homeController#leaveComment');
   $router->map('POST', '/delete-comment', 'homeController#deleteComment');

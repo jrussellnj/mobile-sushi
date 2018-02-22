@@ -52,7 +52,8 @@
           photo,
           title,
           mobile_users.name,
-          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date
+          from_unixtime(timestamp, "%M %e, %Y \at %l:%i%p") as date,
+          user_id
         from mobile_photos
         inner join mobile_users
         on user_id = mobile_users.id
@@ -62,7 +63,7 @@
 
       $stmt->bind_param('s', $photoId);
       $stmt->execute();
-      $stmt->bind_result($id, $photo, $title, $name, $date);
+      $stmt->bind_result($id, $photo, $title, $name, $date, $photoOwnerId);
 
       while ($stmt->fetch()) {
         $photoVars = array(
@@ -70,7 +71,8 @@
           'photo' => $photo,
           'title' => $title,
           'name' => $name,
-          'date' => $date
+          'date' => $date,
+          'logged_in_user_owns_photo' => $userId == $photoOwnerId
         );
       }
 
@@ -122,6 +124,37 @@
           'comments' => $comments
         )
       ));
+    }
+
+    # Editing a photo's title
+    public static function editTitle() {
+      $photoId = $_POST['photo_id'];
+      $newTitle = $_POST['new_title'];
+
+      # Get the ID of the logged-in user
+      $loggedInUserId = parent::getLoggedInUsersId();
+
+      # Get the database handler
+      $mysqli = parent::dbConnect();
+
+      # First, make sure the user actually owns this photo before allowing them to edit its title
+      $stmt = $mysqli->prepare('select user_id from mobile_photos where id = ?');
+      $stmt->bind_param('s', $photoId);
+      $stmt->execute();
+      $stmt->bind_result($photoOwnerUserId);
+      $stmt->fetch();
+      $stmt->close();
+
+      if ($loggedInUserId == $photoOwnerUserId) {
+        $stmt = $mysqli->prepare('update mobile_photos set title = ? where id = ?');
+        $stmt->bind_param('ss', $newTitle, $photoId);
+        $returnValue = $stmt->execute();
+      }
+      else {
+        $returnValue = 0;
+      }
+
+      print "{ \"success\": $returnValue }";
     }
 
     # Explore page - main

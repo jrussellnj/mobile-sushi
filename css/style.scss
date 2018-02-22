@@ -158,6 +158,39 @@ header {
 
     .title-date {
       margin-top: 1em;
+
+      .edit-title {
+        &.editing {
+          .default {
+            display: none;
+          }
+
+          .never-mind {
+            display: inline;
+          }
+        }
+
+        .default {
+          display: inline;
+        }
+
+        .never-mind {
+          display: none;
+        }
+      }
+
+      form {
+        display: none;
+        margin: 0;
+
+        &.show {
+          display: inline;
+        }
+
+        input[type="text"] {
+          padding: .5em;
+        }
+      }
     }
   }
 
@@ -177,7 +210,7 @@ header {
     }
   }
 
-  form {
+  #comment-form {
     margin: 2em 0 0;
 
     input {
