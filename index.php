@@ -6,6 +6,7 @@
   # Include Controllers
   require_once('controllers/applicationController.php');
   require_once('controllers/homeController.php');
+  require_once('controllers/apiController.php');
 
 
   # Use AltoRouter to map routes
@@ -36,6 +37,9 @@
 
   # View a random photo
   $router->map('POST', '/get-random-photo', 'homeController#getRandomPhoto');
+
+  # API endpoints
+  $router->map('GET', '/api/randomcomment/[a:user]', 'apiController#randomCommentByUser');
 
 
   # Figure out if the route is matched, and if it is, call its controller action
