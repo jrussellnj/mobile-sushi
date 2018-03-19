@@ -11,7 +11,9 @@
         $mysqli = parent::dbConnect();
 
         # Get a random comment from the user whose username was provided
-        $query = 'select comment
+        $query = 'select
+            comment,
+            photo_id
           from mobile_comments
           inner join mobile_users
           on mobile_comments.user_id = mobile_users.id
@@ -22,11 +24,11 @@
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param('s', $params['user']);
         $stmt->execute();
-        $stmt->bind_result($comment);
+        $stmt->bind_result($comment, $photo_id);
         $stmt->fetch();
         $stmt->close();
 
-        print "{ \"comment\": \"$comment\" }";
+        print "{ \"comment\": \"$comment\", \"photo_id\" : \"$photo_id\" }";
       }
       else {
         print "{ \"comment\": '' }";
