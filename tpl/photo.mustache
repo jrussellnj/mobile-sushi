@@ -3,20 +3,36 @@
 <div class="row photo-page">
   <div class="col-12 col-md-6">
     <div class="justify-content-center photo">
-      <a href="http://mobile.sushipopsicle.com/userimages/{{photo}}" target="_blank">
-        <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
-      </a>
+
+      {{# is_logged_in}}
+        <a href="http://mobile.sushipopsicle.com/userimages/{{photo}}" target="_blank">
+          <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
+        </a>
+      {{/ is_logged_in}}
+
+      {{^ is_logged_in}}
+        <img src="http://via.placeholder.com/640x480/d0d0d0/d0d0d0?text=x" />
+      {{/ is_logged_in}}
 
       <div class="title-date">
-        <span id="the-title">
-        {{^ title}}
-          Untitled
-        {{/ title}}
+        {{# is_logged_in}}
+          <span id="the-title">
+            {{^ title}}
+              Untitled
+            {{/ title}}
 
-        {{# title}}
-          {{title}}
-        {{/ title}}
-        </span>
+            {{# title}}
+              {{title}}
+            {{/ title}}
+          </span>
+        {{/ is_logged_in}}
+
+        {{^ is_logged_in}}
+          <div style="color: #C0C0C0;">
+          &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;<br />
+          &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;
+          </div>
+        {{/ is_logged_in}}
 
         {{# logged_in_user_owns_photo}}
           <form id="edit-title-form">
@@ -29,9 +45,11 @@
         {{/ logged_in_user_owns_photo}}
       </div>
 
-      <div>
-        <small>{{name}} at {{date}}</small>
-      </div>
+      {{# is_logged_in}}
+        <div>
+          <small>{{name}} at {{date}}</small>
+        </div>
+      {{/ is_logged_in}}
     </div>
   </div>
 
