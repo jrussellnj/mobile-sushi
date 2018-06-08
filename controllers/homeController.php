@@ -30,8 +30,10 @@
       # Initialize and inflate the template
       $tpl = parent::tpl()->loadPartial('ajax/more_photos');
 
-      print $tpl->render(array(
-        'photos' => $photos
+      print $tpl->render(array_merge(parent::getGlobalTemplateData(),
+        array(
+          'photos' => $photos
+        )
       ));
     }
 
