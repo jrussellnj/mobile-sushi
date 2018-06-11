@@ -110,6 +110,21 @@ header {
 }
 
 /* Home page */
+.photo-container-logged-out {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+
+  &:before {
+    background: -wekbit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    content: '';
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+}
+
 .photo-row {
   .photo {
     background-color: $lightGray;

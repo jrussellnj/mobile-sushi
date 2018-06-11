@@ -1,6 +1,7 @@
 {{> header}}
 
-<div id="photo-container">
+{{# is_logged_in}}<div id="photo-container">{{/ is_logged_in}}
+{{^ is_logged_in}}<div id="photo-container" class="photo-container-logged-out">{{/ is_logged_in}}
   <div class="row justify-content-center photo-row"">
     {{#photos}}
       {{> photo_block}}
