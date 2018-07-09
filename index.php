@@ -6,6 +6,9 @@
   # Include Controllers
   require_once('controllers/applicationController.php');
   require_once('controllers/homeController.php');
+  require_once('controllers/userController.php');
+  require_once('controllers/photoController.php');
+  require_once('controllers/accountController.php');
   require_once('controllers/apiController.php');
 
 
@@ -34,6 +37,10 @@
   # Explore page
   $router->map('GET', '/explore', 'homeController#explore');
   $router->map('GET', '/explore/results', 'homeController#exploreResults');
+
+  # Account page
+  $router->map('GET', '/account', 'accountController#index');
+  $router->map('POST', '/account/update', 'accountController#update');
 
   # View a random photo
   $router->map('POST', '/get-random-photo', 'homeController#getRandomPhoto');
