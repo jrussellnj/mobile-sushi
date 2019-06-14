@@ -34,6 +34,12 @@
           </div>
         {{/ is_logged_in}}
 
+        {{# is_logged_in}}
+          <div>
+            <small>{{name}} at {{date}}</small>
+          </div>
+        {{/ is_logged_in}}
+
         {{# logged_in_user_owns_photo}}
           <form id="edit-title-form">
             <input type="text" name="new_title" value="{{title}}" placeholder="Type new title..." />
@@ -41,15 +47,15 @@
             <button type="submit">Edit Title</button>
           </form>
 
-          <small><a href="#" class="edit-title"><span class="default">Edit</span><span class="never-mind">Never mind</span></a></small>
+          <form id="delete-photo-form">
+            <input type="hidden" name="photo_id" value="{{id}}" />
+          </form>
+
+          <div>
+            <small><a href="#" class="edit-title"><span class="default">Edit Title</span><span class="never-mind">Never mind</span></a> | <a href="#" class="delete-photo">Delete Photo</a></small>
+          </div>
         {{/ logged_in_user_owns_photo}}
       </div>
-
-      {{# is_logged_in}}
-        <div>
-          <small>{{name}} at {{date}}</small>
-        </div>
-      {{/ is_logged_in}}
     </div>
   </div>
 

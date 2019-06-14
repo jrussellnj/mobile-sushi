@@ -159,6 +159,13 @@
       print "{ \"success\": $returnValue }";
     }
 
+    # Deleting a photo
+    public static function deletePhoto() {
+      $photoId = $_POST['photo_id'];
+      return photoController::delete($photoId);
+    }
+
+
     # Explore page - main
     public static function explore() {
 

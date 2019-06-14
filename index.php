@@ -26,6 +26,9 @@
   # Photo title editing
   $router->map('POST', '/edit-title', 'homeController#editTitle');
 
+  # Photo deletion
+  $router->map('POST', '/delete-photo', 'homeController#deletePhoto');
+
   # Commenting
   $router->map('POST', '/leave-comment', 'homeController#leaveComment');
   $router->map('POST', '/delete-comment', 'homeController#deleteComment');
