@@ -14,6 +14,9 @@ $(document).ready(function() {
   // Photo title editing
   hookUpTitleEditing();
 
+  // Photo deletion
+  hookUpPhotoDeletion();
+
   // Explore page date picker
   datePicker();
 });
@@ -166,4 +169,28 @@ function datePicker() {
       $('input[name="date_formatted"]').val(this.getDate());
     }
   });
+}
+
+function hookUpPhotoDeletion() {
+  var
+    deletePhotoLink = $('.delete-photo'),
+    deletePhotoForm = $('#delete-photo-form');
+
+  // Show the title editing form
+  deletePhotoLink.click(function(e) {
+    e.preventDefault();
+
+    if (confirm("Really delete?")) {
+
+      // Send off the request to delete the photo
+      $.post('/delete-photo', deletePhotoForm.serialize(), function(data) {
+        data = JSON.parse(data);
+
+        if (data.success == 1) {
+          window.location = '/';
+        }
+      });
+    }
+  });
+
 }
