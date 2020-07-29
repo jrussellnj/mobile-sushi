@@ -10,6 +10,15 @@ $(document).ready(function() {
 
   // Commenting
   hookUpCommenting();
+
+  // Photo title editing
+  hookUpTitleEditing();
+
+  // Photo deletion
+  hookUpPhotoDeletion();
+
+  // Explore page date picker
+  datePicker();
 });
 
 function loggingIn() {
@@ -28,6 +37,36 @@ function loggingIn() {
   dialogCloseLink.click(function(e) {
     e.preventDefault();
     logInOverlay.fadeOut();
+  });
+}
+
+function hookUpTitleEditing() {
+  var
+    theTitle = $('#the-title'),
+    editTitleLink = $('.edit-title'),
+    editTitleForm = $('#edit-title-form');
+
+  // Show the title editing form
+  editTitleLink.click(function(e) {
+    e.preventDefault();
+
+    $(this).toggleClass('editing');
+    theTitle.toggle();
+    editTitleForm.toggleClass('show');
+    editTitleForm.find('input[type="text"]').focus();
+  });
+
+  editTitleForm.submit(function(e) {
+    e.preventDefault();
+
+    // Send off the request for a title edit
+    $.post('/edit-title', $(this).serialize(), function(data) {
+      data = JSON.parse(data);
+
+      if (data.success == 1) {
+        location.reload();
+      }
+    });
   });
 }
 
@@ -120,4 +159,38 @@ function unreadComments() {
     e.preventDefault();
     unreadDetails.slideToggle(250);
   });
+}
+
+function datePicker() {
+  var picker = new Pikaday({
+    field: document.getElementById('datepicker'),
+    format: 'YYYY-MM-DD',
+    onSelect: function() {
+      $('input[name="date_formatted"]').val(this.getDate());
+    }
+  });
+}
+
+function hookUpPhotoDeletion() {
+  var
+    deletePhotoLink = $('.delete-photo'),
+    deletePhotoForm = $('#delete-photo-form');
+
+  // Show the title editing form
+  deletePhotoLink.click(function(e) {
+    e.preventDefault();
+
+    if (confirm("Really delete?")) {
+
+      // Send off the request to delete the photo
+      $.post('/delete-photo', deletePhotoForm.serialize(), function(data) {
+        data = JSON.parse(data);
+
+        if (data.success == 1) {
+          window.location = '/';
+        }
+      });
+    }
+  });
+
 }

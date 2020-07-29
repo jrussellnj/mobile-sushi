@@ -1,0 +1,35 @@
+{{> header}}
+
+<form id="explore-form" action="/explore/results" method="get">
+  <h4>Explore the photos!</h4>
+
+  <p>You may select a date, a user, or both.</p>
+
+  <br />
+
+  <h5>Select a date</h5>
+  <input type="text" id="datepicker" placeholder="Click here to select date..." />
+  <p><br /><strong>Note!</strong> You can click the month to change the month and the year to change the year.</p>
+
+  <br /><br />
+
+  <h5>Select a user</h5>
+  <select name="user_id" class="custom-select">
+    <option value=""></option>
+
+    {{# users}}
+      <option value={{id}}>{{name}}</option>
+    {{/ users}}
+  </select>
+
+  <br /><br />
+
+  <input type="hidden" name="date_formatted" />
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<form method="post" action="/get-random-photo">
+  <button type="submit" class="btn btn-secondary random-photo-btn">See a Random Photo</button>
+</form>
+
+{{> footer}}

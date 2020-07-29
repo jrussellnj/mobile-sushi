@@ -1,33 +1,71 @@
 {{> header}}
 
-<div class="row justify-content-center photo-page">
-  <div class="col">
+<div class="row photo-page">
+  <div class="col-12 col-md-6">
     <div class="justify-content-center photo">
-      <a href="http://mobile.sushipopsicle.com/userimages/{{photo}}" target="_blank">
-        <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
-      </a>
+
+      {{# is_logged_in}}
+        <a href="http://mobile.sushipopsicle.com/userimages/{{photo}}" target="_blank">
+          <img src="http://mobile.sushipopsicle.com/userimages/{{photo}}" />
+        </a>
+      {{/ is_logged_in}}
+
+      {{^ is_logged_in}}
+        <img src="http://via.placeholder.com/640x480/d0d0d0/d0d0d0?text=x" />
+      {{/ is_logged_in}}
 
       <div class="title-date">
-        {{^ title}}
-          Untitled
-        {{/ title}}
+        {{# is_logged_in}}
+          <span id="the-title">
+            {{^ title}}
+              Untitled
+            {{/ title}}
 
-        {{# title}}
-          {{title}}
-        {{/ title}}
+            {{# title}}
+              {{title}}
+            {{/ title}}
+          </span>
+        {{/ is_logged_in}}
 
-        <br/> <small>{{name}} at {{date}}</small>
+        {{^ is_logged_in}}
+          <div style="color: #C0C0C0;">
+          &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;<br />
+          &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;
+          </div>
+        {{/ is_logged_in}}
+
+        {{# is_logged_in}}
+          <div>
+            <small>{{name}} at {{date}}</small>
+          </div>
+        {{/ is_logged_in}}
+
+        {{# logged_in_user_owns_photo}}
+          <form id="edit-title-form">
+            <input type="text" name="new_title" value="{{title}}" placeholder="Type new title..." />
+            <input type="hidden" name="photo_id" value="{{id}}" />
+            <button type="submit">Edit Title</button>
+          </form>
+
+          <form id="delete-photo-form">
+            <input type="hidden" name="photo_id" value="{{id}}" />
+          </form>
+
+          <div>
+            <small><a href="#" class="edit-title"><span class="default">Edit Title</span><span class="never-mind">Never mind</span></a> | <a href="#" class="delete-photo">Delete Photo</a></small>
+          </div>
+        {{/ logged_in_user_owns_photo}}
       </div>
     </div>
   </div>
 
-  <div class="col comments">
+  <div class="col-12 col-md-6 mt-4 mt-md-0 comments">
     <h4>Comments</h4>
 
     {{# is_logged_in}}
       {{# comments}}
         <div class="comment">
-          <div class="name-comment"><span class="name">{{name}}</span>: {{comment}}</div>
+          <div class="name-comment"><span class="name">{{name}}</span>: {{{comment}}}</div>
           <div class="date">{{date}}</div>
 
           {{# is_logged_in }}

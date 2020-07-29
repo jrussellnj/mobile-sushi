@@ -4,7 +4,13 @@
 
     # Provide an object with which to interface with the databae
     protected static function dbConnect() {
-      return new mysqli($_SERVER['dbHost'], $_SERVER['dbUser'], $_SERVER['dbPassword'], $_SERVER['dbDatabase']);
+      $mysqli = new mysqli($_SERVER['dbHost'], $_SERVER['dbUser'], $_SERVER['dbPassword'], $_SERVER['dbDatabase']);
+	  
+      if (mysqli_connect_errno()) {
+        error_log("Connect failed: %s\n", mysqli_connect_error());
+      }
+
+      return $mysqli;
     }
 
     # Provide a Mustache template object that descendant classes can access
@@ -41,6 +47,7 @@
     # Figure out if the user is logged in by checking their msushi cookie, if one exists
     protected static function isValidUser($msushiCookie) {
       $isValid = false;
+      $msushiCookie = urldecode($msushiCookie);
 
       if ($msushiCookie) {
         $mysqli = self::dbConnect();
@@ -95,8 +102,13 @@
 
         foreach($unseenCommentIds as $id) {
           $stmt = $mysqli->prepare('insert into mobile_comments_unseen (comment_id, unseen_by_user_id) values (?, ?)');
-          $stmt->bind_param('ss', $id, $userId);
-          $stmt->execute();
+		  if ($stmt) {
+			  $stmt->bind_param('ss', $id, $userId);
+			  $stmt->execute();
+		  }
+		  else {
+			  error_log("PREPARE FAILED: " . var_export( mysqli_connect_error(),true));
+		  }
         }
 
 

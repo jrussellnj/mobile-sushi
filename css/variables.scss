@@ -1,3 +1,13 @@
 /* Colors */
 $lightGray: #f0f0f0;
 $darkGray: #d0d0d0;
+
+/* Screen sizes for media queries */
+$desktopSmall: 1024px;
+
+/* Responsive methods */
+@mixin respond-min($width) {
+  @media screen and (min-width: $width) {
+    @content;
+  }
+}
