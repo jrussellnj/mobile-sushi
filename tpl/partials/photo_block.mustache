@@ -1,23 +1,41 @@
 <div class="justify-content-center photo">
+
   <!-- Photo and link -->
-  <a href="/photo/{{id}}">
-    <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
-  </a>
+  {{# is_logged_in}}
+    <a href="/photo/{{id}}">
+      <img src="http://mobile.sushipopsicle.com/userimages/thumb/320x240{{photo}}" />
+    </a>
+  {{/ is_logged_in}}
+
+  {{^ is_logged_in}}
+    <a href="/">
+      <img src="http://via.placeholder.com/320x240/d0d0d0/d0d0d0?text=x" />
+    </a>
+  {{/ is_logged_in}}
 
   <!-- Title and user info -->
   <br />
   <div>
-    {{^ title}}
-      Untitled
-    {{/ title}}
+    {{# is_logged_in}}
+      {{^ title}}
+        Untitled
+      {{/ title}}
 
-    {{# title}}
-      {{title}}
-    {{/ title}}
+      {{# title}}
+        {{title}}
+      {{/ title}}
 
-    <div class="name-date">
-      <small>{{name}} at {{date}}</small>
-    </div>
+      <div class="name-date">
+        <small>{{name}} at {{date}}</small>
+      </div>
+    {{/ is_logged_in}}
+
+    {{^ is_logged_in}}
+      <div style="color: #C0C0C0;">
+      &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;
+      &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;
+      </div>
+    {{/ is_logged_in}}
 
     {{# is_logged_in }}
       <div class="comment-number">

@@ -32,14 +32,14 @@
       if (isset($_COOKIE['msushi']) && self::isValidUser($_COOKIE['msushi'])) {
         $data['is_logged_in'] = true;
         $data['is_logged_out'] = false;
+
+        # Get unread comment information
+        $data['unread_comments'] = self::getUnreadComments();
       }
       else {
         $data['is_logged_in'] = false;
         $data['is_logged_out'] = true;
       }
-
-      # Get unread comment information
-      $data['unread_comments'] = self::getUnreadComments();
 
       return $data;
     }
@@ -47,6 +47,7 @@
     # Figure out if the user is logged in by checking their msushi cookie, if one exists
     protected static function isValidUser($msushiCookie) {
       $isValid = false;
+      $msushiCookie = urldecode($msushiCookie);
 
       if ($msushiCookie) {
         $mysqli = self::dbConnect();

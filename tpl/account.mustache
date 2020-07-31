@@ -1,0 +1,39 @@
+{{> header}}
+
+<form id="account-form" class="inner-form" action="/account/update" method="post" autocomplete="off">
+  <h4>Update Your Account</h4>
+
+  {{#success}}
+    <p><br />{{success}}</p>
+  {{/success}}
+
+  <br />
+
+  <!--  fake fields are a workaround for chrome/opera autofill getting the wrong fields -->
+  <input id="username" style="display:none" type="text" name="fakeusernameremembered">
+  <input id="password" style="display:none" type="password" name="fakepasswordremembered">
+
+  <h5>Display Name</h5>
+  <input type="text" name="displayname" value="{{displayname}}" autocomplete="nope" />
+
+  <br /><br />
+
+  <h5>Username</h5>
+  <input type="text" name="username" value="{{username}}" autocomplete="nope" />
+
+  <br /><br />
+
+  <h5>Email Address</h5>
+  <input type="text" name="address" value="{{emailaddress}}" autocomplete="nope" />
+
+  <br /><br />
+
+  <h5>Password</h5>
+  <input type="password" name="password" autocomplete="new-password" />
+  <br /><small>Leave blank to keep the same password</small>
+
+  <br /><br />
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{{> footer}}

@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'lib/pikaday';
 
 body {
   padding: 0 0 5% 0;
@@ -109,6 +110,21 @@ header {
 }
 
 /* Home page */
+.photo-container-logged-out {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+
+  &:before {
+    background: -wekbit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    content: '';
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+}
+
 .photo-row {
   .photo {
     background-color: $lightGray;
@@ -157,6 +173,40 @@ header {
 
     .title-date {
       margin-top: 1em;
+
+      .edit-title {
+        &.editing {
+          .default {
+            display: none;
+          }
+
+          .never-mind {
+            display: inline;
+          }
+        }
+
+        .default {
+          display: inline;
+        }
+
+        .never-mind {
+          display: none;
+        }
+      }
+
+      form {
+        display: none;
+        margin: 0;
+
+        &.show {
+          display: inline;
+        }
+
+        input[type="text"] {
+          padding: .5em;
+          width: 60%;
+        }
+      }
     }
   }
 
@@ -176,13 +226,17 @@ header {
     }
   }
 
-  form {
+  #comment-form {
     margin: 2em 0 0;
 
     input {
       display: block;
       padding: .5em;
-      width: 60%;
+      width: 100%;
+
+      @include respond-min($desktopSmall) {
+        width: 60%;
+      }
 
       &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
         color: $darkGray;
@@ -209,5 +263,25 @@ header {
     input[type="submit"] {
       display: none;
     }
+  }
+}
+
+/* Explore page */
+#explore-form .btn,
+.random-photo-btn {
+  cursor: pointer;
+}
+
+/* Explore results page */
+.prev-page-link {
+  margin: 0 1em 0 0;
+}
+
+/* Inner page form styling */
+.inner-form {
+  input[type="text"],
+  input[type="password"] {
+    padding: 0.5em 1em;
+    width: 17em;
   }
 }
