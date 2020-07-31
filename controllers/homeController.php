@@ -205,7 +205,8 @@
           while ($stmt->fetch()) {
 
             # Create a token
-            $token = md5(microtime());
+            $salt = substr(strtr(base64_encode(openssl_random_pseudo_bytes(22)), '+', '.'), 0, 22);
+            $token = crypt(time() * intval($userId), '$2y$12$' . $salt);
 
             # Set the msushi cookie
             setcookie('msushi', $token, time() + (86400 * 30)); // Cookie is good for 30 days
@@ -214,9 +215,10 @@
           # Set the token in the database
           $stmt->close();
 
-          $stmt = $mysqli->prepare('update mobile_users set token = ? where id = ? limit 1');
+          $stmt = $mysqli->prepare('insert into mobile_tokens (token, user_id) values(?, ?)');
           $stmt->bind_param('ss', $token, $userId);
           $stmt->execute();
+          $stmt->close();
         }
       }
 
@@ -232,17 +234,8 @@
       # Unset the login token in the database
       $mysqli = parent::dbConnect();
 
-      $stmt = $mysqli->prepare('select id from mobile_users where token = ? limit 1');
-      $decodedCookie = urldecode($_COOKIE['msushi']);
-      $stmt->bind_param('s', $decodedCookie);
-      $stmt->execute();
-      $stmt->bind_result($userId);
-      $stmt->fetch();
-      $stmt->close();
-
-      $stmt = $mysqli->prepare('update mobile_users set token = ? where id = ? limit 1');
-      $emptyString = '';
-      $stmt->bind_param('ss', $emptyString, $userId);
+      $stmt = $mysqli->prepare('delete from mobile_tokens where token = ? limit 1');
+      $stmt->bind_param('s', $_COOKIE['msushi']);
       $stmt->execute();
 
       # Unset the msushi cookie
