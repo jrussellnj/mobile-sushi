@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.0
       with:
@@ -23,3 +24,6 @@ jobs:
         remote_user: ${{ secrets.DEPLOY_USER }}
         remote_key: ${{ secrets.DEPLOY_KEY }}
         remote_port: ${{ secrets.DEPLOY_PORT }}
+
+    - name: Install dependencies
+      uses: php-actions/composer@v1
