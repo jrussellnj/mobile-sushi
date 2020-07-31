@@ -5,7 +5,7 @@
     # Provide an object with which to interface with the databae
     protected static function dbConnect() {
       $mysqli = new mysqli($_SERVER['dbHost'], $_SERVER['dbUser'], $_SERVER['dbPassword'], $_SERVER['dbDatabase']);
-	  
+
       if (mysqli_connect_errno()) {
         error_log("Connect failed: %s\n", mysqli_connect_error());
       }
@@ -51,7 +51,7 @@
 
       if ($msushiCookie) {
         $mysqli = self::dbConnect();
-        $stmt = $mysqli->prepare('select count(*) from mobile_users where token = ? limit 1');
+        $stmt = $mysqli->prepare('select count(*) from mobile_tokens where token = ? limit 1');
         $stmt->bind_param('s', $msushiCookie);
         $stmt->execute();
         $stmt->bind_result($col1);
@@ -69,7 +69,7 @@
     # Get the logged-in user's ID
     protected static function getLoggedInUsersId() {
       $mysqli = self::dbConnect();
-      $stmt = $mysqli->prepare('select id from mobile_users where token = ? limit 1');
+      $stmt = $mysqli->prepare('select user_id from mobile_tokens where token = ? limit 1');
       $stmt->bind_param('s', $_COOKIE['msushi']);
       $stmt->execute();
       $stmt->bind_result($userId);
@@ -102,21 +102,20 @@
 
         foreach($unseenCommentIds as $id) {
           $stmt = $mysqli->prepare('insert into mobile_comments_unseen (comment_id, unseen_by_user_id) values (?, ?)');
-		  if ($stmt) {
-			  $stmt->bind_param('ss', $id, $userId);
-			  $stmt->execute();
-		  }
-		  else {
-			  error_log("PREPARE FAILED: " . var_export( mysqli_connect_error(),true));
-		  }
-        }
 
+          if ($stmt) {
+            $stmt->bind_param('ss', $id, $userId);
+            $stmt->execute();
+          }
+          else {
+            error_log("PREPARE FAILED: " . var_export( mysqli_connect_error(),true));
+          }
+        }
 
         # Update the user's last_visited value
         $stmt = $mysqli->prepare('update mobile_users set last_visited = now() where id = ? limit 1');
         $stmt->bind_param('s', $userId);
         $stmt->execute();
-
 
         # Get full photo information for the unread comments
         $stmt = $mysqli->prepare('
@@ -127,6 +126,7 @@
           where unseen_by_user_id = ?
           group by mobile_photos.id
         ');
+
         $stmt->bind_param('s', $userId);
         $stmt->execute();
         $stmt->bind_result($photoId, $title, $unreadCommentsOnPhoto);
